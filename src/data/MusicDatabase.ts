@@ -1,7 +1,8 @@
 import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../model/User";
+import { Music } from "../model/Music";
 
-export class UserDatabase extends BaseDatabase {
+export class MusicDatabase extends BaseDatabase {
 
   private static TABLE_NAME = "MUSICS";
 
@@ -25,16 +26,23 @@ export class UserDatabase extends BaseDatabase {
           genre,
           album
         })
-        .into(UserDatabase.TABLE_NAME);
+        .into(MusicDatabase.TABLE_NAME);
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
   }
 
-  public async getMusicById(id: string): Promise<User> {
+  public async getAllMusics(): Promise<Music[]> {
+    const result = await this.getConnection().raw(`
+        select * from ${MusicDatabase.TABLE_NAME};
+    `)
+    return result[0];
+  }
+
+  public async getMusicById(id: string): Promise<Music> {
     const result = await this.getConnection()
       .select("*")
-      .from(UserDatabase.TABLE_NAME)
+      .from(MusicDatabase.TABLE_NAME)
       .where({ id });
 
     return result[0];
