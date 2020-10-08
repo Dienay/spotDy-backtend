@@ -1,7 +1,8 @@
 import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../model/User";
+import { Music } from "../model/Music";
 
-export class UserDatabase extends BaseDatabase {
+export class MusicDatabase extends BaseDatabase {
 
   private static TABLE_NAME = "MUSICS";
 
@@ -12,7 +13,8 @@ export class UserDatabase extends BaseDatabase {
     date: string,
     file: string,
     genre: string[],
-    album: string
+    album: string,
+    user_id: string
   ): Promise<void> {
     try {
       await this.getConnection()
@@ -23,20 +25,36 @@ export class UserDatabase extends BaseDatabase {
           date,
           file,
           genre,
-          album
+          album,
+          user_id
         })
-        .into(UserDatabase.TABLE_NAME);
+        .into(MusicDatabase.TABLE_NAME);
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
   }
 
-  public async getMusicById(id: string): Promise<User> {
+  public async getMusicByUserId(userId: string): Promise<Music[]> {
+    const result = await this.getConnection()
+      .select('*')
+      .from(MusicDatabase.TABLE_NAME)
+      .where({user_id: userId});
+
+      const musics: Music[] = [];
+
+      for (let music of result) {
+        musics.push(Music.toMusicModel(music));
+      }
+
+    return musics;
+  }
+
+  public async getMusicById(musicId: string): Promise<Music> {
     const result = await this.getConnection()
       .select("*")
-      .from(UserDatabase.TABLE_NAME)
-      .where({ id });
+      .from(MusicDatabase.TABLE_NAME)
+      .where({ id: musicId });
 
-    return result[0];
+      return Music.toMusicModel(result[0]);
   }
 }
