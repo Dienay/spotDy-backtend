@@ -3,10 +3,12 @@ import {AddressInfo} from "net";
 import express from "express";
 import { userRouter } from "./routes/userRouter";
 import { musicRouter } from "./routes/musicRouter";
+import cors from "cors"
 dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(cors({ origin: true }));
 
 app.use("/user", userRouter);
 app.use("/music", musicRouter);
