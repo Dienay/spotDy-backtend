@@ -13,7 +13,8 @@ export class MusicDatabase extends BaseDatabase {
     date: string,
     file: string,
     genre: string[],
-    album: string
+    album: string,
+    user_id: string
   ): Promise<void> {
     try {
       await this.getConnection()
@@ -24,7 +25,8 @@ export class MusicDatabase extends BaseDatabase {
           date,
           file,
           genre,
-          album
+          album,
+          user_id
         })
         .into(MusicDatabase.TABLE_NAME);
     } catch (error) {
@@ -32,11 +34,19 @@ export class MusicDatabase extends BaseDatabase {
     }
   }
 
-  public async getAllMusics(): Promise<Music[]> {
-    const result = await this.getConnection().raw(`
-        select * from ${MusicDatabase.TABLE_NAME};
-    `)
-    return result[0];
+  public async getMusicByUserId(userId: string): Promise<Music[]> {
+    const result = await this.getConnection()
+      .select('*')
+      .from(MusicDatabase.TABLE_NAME)
+      .where({user_id: userId});
+
+      const musics: Music[] = [];
+
+      for (let music of result) {
+        musics.push(Music.toUserModel(music));
+      }
+
+    return musics;
   }
 
   public async getMusicById(id: string): Promise<Music> {

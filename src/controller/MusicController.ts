@@ -20,6 +20,9 @@ export class MusicController {
             const musicBusiness = new MusicBusiness();
             await musicBusiness.createMusic(input, token);
 
+            console.log(input)
+            console.log(token)
+
             res.status(200).send({ 
                 message: "Music created"
              });
@@ -31,11 +34,11 @@ export class MusicController {
         await BaseDatabase.destroyConnection();
     }
 
-    async getAllMusics(req: Request, res: Response) {
+    async getMusicByUserId(req: Request, res: Response) {
         try{
             const token = req.headers.authorization as string
             const musicBusiness = new MusicBusiness();
-            const result = await musicBusiness.getAllMusics(token)
+            const result = await musicBusiness.getMusicByUserId(token)
 
             res.status(200).send({result});
 
