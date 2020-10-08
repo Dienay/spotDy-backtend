@@ -42,4 +42,16 @@ export class MusicBusiness {
             throw new Error(error.message)
         }
     }
+
+    async getMusicById(token: string, musicId: string) {
+        try {
+            new Authenticator().getData(token)
+            const musicDatabase = new MusicDatabase();
+            const music = await musicDatabase.getMusicById(musicId);
+
+            return music
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
 }

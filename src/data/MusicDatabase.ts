@@ -43,18 +43,18 @@ export class MusicDatabase extends BaseDatabase {
       const musics: Music[] = [];
 
       for (let music of result) {
-        musics.push(Music.toUserModel(music));
+        musics.push(Music.toMusicModel(music));
       }
 
     return musics;
   }
 
-  public async getMusicById(id: string): Promise<Music> {
+  public async getMusicById(musicId: string): Promise<Music> {
     const result = await this.getConnection()
       .select("*")
       .from(MusicDatabase.TABLE_NAME)
-      .where({ id });
+      .where({ id: musicId });
 
-    return result[0];
+      return Music.toMusicModel(result[0]);
   }
 }

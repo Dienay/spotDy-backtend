@@ -74,7 +74,7 @@ export class Music{
         this.userId = userId;
     }
 
-    static toUserModel(user: any): Music {
+    static toMusicModel(user: any): Music {
         return new Music(user.id, user.title, user.author, user.date, user.file, user.genre, user.album, user.userId);
       }
 }

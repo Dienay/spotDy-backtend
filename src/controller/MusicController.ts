@@ -49,4 +49,20 @@ export class MusicController {
         }
         await BaseDatabase.destroyConnection();
     }
+
+    async getMusicById(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization as string;
+            const musicId = req.params.id
+
+            const musicBusiness = new MusicBusiness();
+            const result = await musicBusiness.getMusicById(token, musicId)
+
+            res.status(200).send({result});
+        } catch (error) {
+            res.status(200).send({
+                message: "Id not found"
+            });
+        }
+    }
 }

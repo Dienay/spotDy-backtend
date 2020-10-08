@@ -8,3 +8,4 @@ const musicController = new MusicController();
 
 musicRouter.post("/create", musicController.createMusic);
 musicRouter.get("/musics", musicController.getMusicByUserId);
+musicRouter.get("/musics/:id", musicController.getMusicById);
