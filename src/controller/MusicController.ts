@@ -20,9 +20,6 @@ export class MusicController {
             const musicBusiness = new MusicBusiness();
             await musicBusiness.createMusic(input, token);
 
-            console.log(input)
-            console.log(token)
-
             res.status(200).send({ 
                 message: "Music created"
              });
@@ -43,7 +40,7 @@ export class MusicController {
             res.status(200).send({result});
 
         }catch (error) {
-            res.status(200).send({
+            res.status(400).send({
                 message: "Get token error"
             });
         }
@@ -60,7 +57,7 @@ export class MusicController {
 
             res.status(200).send({result});
         } catch (error) {
-            res.status(200).send({
+            res.status(400).send({
                 message: "Id not found"
             });
         }

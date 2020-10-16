@@ -4,6 +4,7 @@ import express from "express";
 import { userRouter } from "./routes/userRouter";
 import { musicRouter } from "./routes/musicRouter";
 import cors from "cors"
+import { playlistRouter } from "./routes/playlistRouter";
 dotenv.config();
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(cors({ origin: true }));
 
 app.use("/user", userRouter);
 app.use("/music", musicRouter);
+app.use("/playlist", playlistRouter);
 
 const server = app.listen(process.env.PORT, () => {
     if (server) {

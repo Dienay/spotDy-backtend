@@ -34,9 +34,8 @@
     "ts-jest": "^26.1.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.6",
+    "ts-node-dev": "^1.0.0-pre.63",
     "uuid": "^8.2.0"
   },
-  "devDependencies": {
-    "ts-node-dev": "^1.0.0-pre.63"
-  }
+  "devDependencies": {}
 }
