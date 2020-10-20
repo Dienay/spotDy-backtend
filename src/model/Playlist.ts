@@ -63,3 +63,8 @@ export interface AddMusicInPlaylistInputDTO{
 	playlist_id: string,
 	music_id: string
 }
+
+export interface InputPlaylistFilterDTO{
+    title: string,
+    orderType: string
+}

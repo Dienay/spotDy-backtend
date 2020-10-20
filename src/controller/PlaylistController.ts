@@ -3,7 +3,7 @@ import { MusicBusiness } from "../business/MusicBusiness";
 import { PlaylistBusiness } from "../business/PlaylistBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
 import { MusicInputDTO } from "../model/Music";
-import { AddMusicInPlaylistInputDTO, PlaylistInputDTO } from "../model/Playlist";
+import { AddMusicInPlaylistInputDTO, InputPlaylistFilterDTO, PlaylistInputDTO } from "../model/Playlist";
 
 export class PlaylistController {
     async createPlaylist(req: Request, res: Response) {
@@ -99,6 +99,25 @@ export class PlaylistController {
         } catch (error) {
             res.status(400).send({
                 message: "Id not found"
+            });
+        }
+    }
+
+    async filterPlaylist(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization as string;
+
+            const inputfilterPlaylist: InputPlaylistFilterDTO = {
+                title: req.query.title as string,
+                orderType: req.query.orderType as string || "ASC"
+            }
+
+            const result = await new PlaylistBusiness().filterPlaylist(token, inputfilterPlaylist)
+
+            res.status(200).send(result)
+        } catch (error) {
+            res.status(400).send({
+                message: "Playlist not found!"
             });
         }
     }

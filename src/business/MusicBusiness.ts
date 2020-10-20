@@ -1,5 +1,5 @@
 import { MusicDatabase } from "../data/MusicDatabase";
-import { MusicInputDTO } from "../model/Music";
+import { InputMusicFilterDTO, MusicInputDTO } from "../model/Music";
 import { Authenticator } from "../services/Authenticator";
 import { IdGenerator } from "../services/IdGenerator";
 
@@ -48,6 +48,34 @@ export class MusicBusiness {
             const music = await musicDatabase.getMusicById(musicId);
 
             return music
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    async filterMusic(token: string,inputFilter: InputMusicFilterDTO) {
+        try {
+            new Authenticator().getData(token)
+
+            const validOrderByValues = ["album", "author", "genre"]
+            const validOrderTypeValues = ["ASC", "DESC"]
+
+            if(!validOrderByValues.includes(inputFilter.category)){
+                throw new Error("Valores para \"category\" devem ser \"album\", \"author\" ou \"genre\"")
+            }
+
+            if(!validOrderTypeValues.includes(inputFilter.orderType)){
+                throw new Error("Valores para \"orderType\" devem ser \"ASC\" ou \"DESC\"")
+            }
+
+            const result = await new MusicDatabase().filterMusic(inputFilter)
+
+            if(!result.length){
+                throw new Error("Music not found!")
+            }
+
+            return result
+
         } catch (error) {
             throw new Error(error.message)
         }

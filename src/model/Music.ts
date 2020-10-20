@@ -87,3 +87,9 @@ export interface MusicInputDTO{
 	genre: string[],
     album: string
 }
+
+export interface InputMusicFilterDTO{
+    category: string,
+    input: string,
+    orderType: string
+}

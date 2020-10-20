@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { query, Request, Response } from "express";
 import { MusicBusiness } from "../business/MusicBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
-import { MusicInputDTO } from "../model/Music";
+import { InputMusicFilterDTO, MusicInputDTO } from "../model/Music";
 
 export class MusicController {
     async createMusic(req: Request, res: Response) {
@@ -59,6 +59,27 @@ export class MusicController {
         } catch (error) {
             res.status(400).send({
                 message: "Id not found"
+            });
+        }
+    }
+
+    async filterMusic(req: Request, res: Response) {
+        console.log("controller")
+        try {
+            const token = req.headers.authorization as string;
+
+            const inputfilterMusic: InputMusicFilterDTO = {
+                category: req.query.category as string,
+                input: req.query.input as string,
+                orderType: req.query.orderType as string || "ASC"
+            }
+
+            const result = await new MusicBusiness().filterMusic(token, inputfilterMusic)
+
+            res.status(200).send(result)
+        } catch (error) {
+            res.status(400).send({
+                message: "Music not found!"
             });
         }
     }

@@ -1,6 +1,6 @@
 import { MusicDatabase } from "../data/MusicDatabase";
 import { PlaylistDatabase } from "../data/PlaylistDatabase";
-import { AddMusicInPlaylistInputDTO, PlaylistInputDTO } from "../model/Playlist";
+import { AddMusicInPlaylistInputDTO, InputPlaylistFilterDTO, PlaylistInputDTO } from "../model/Playlist";
 import { Authenticator } from "../services/Authenticator";
 import { IdGenerator } from "../services/IdGenerator";
 
@@ -62,6 +62,32 @@ export class PlaylistBusiness {
             const collection = await playlistDatabase.getPlaylist(playlistId);
 
             return collection
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
+
+    async filterPlaylist(token: string, inputFilter: InputPlaylistFilterDTO) {
+        try {
+            new Authenticator().getData(token)
+
+            const validOrderTypeValues = ["ASC", "DESC"]
+
+            if(!inputFilter.title){
+                throw new Error("Valores para \"title\" deve ser \"title\"")
+            }
+
+            if(!validOrderTypeValues.includes(inputFilter.orderType)){
+                throw new Error("Valores para \"orderType\" devem ser \"ASC\" ou \"DESC\"")
+            }
+
+            const result = await new PlaylistDatabase().filterPLaylist(inputFilter)
+            if(!result.length){
+                throw new Error("Playlist not found!")
+            }
+
+            return result
+
         } catch (error) {
             throw new Error(error.message)
         }
