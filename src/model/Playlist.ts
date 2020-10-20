@@ -3,7 +3,8 @@ export class Playlist{
     private id: string,
     private title: string,
     private subtitle: string,
-    private date: string
+    private date: string,
+    private userId: string
     ){}
 
     getId(){
@@ -22,6 +23,10 @@ export class Playlist{
         return this.date;
     }
 
+    getUserId(){
+        return this.userId;
+    }
+
     setId(id: string){
         this.id = id;
     }
@@ -38,8 +43,12 @@ export class Playlist{
         this.date = date;
     }
 
+    setUserId(userId: string){
+        this.userId = userId;
+    }
+
     static toPlaylistModel(user: any): Playlist {
-        return new Playlist(user.id, user.title, user.subtitle, user.date);
+        return new Playlist(user.id, user.title, user.subtitle, user.date, user.userId);
       }
 }
 

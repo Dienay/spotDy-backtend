@@ -1,18 +1,18 @@
 import { BaseDatabase } from "./BaseDatabase";
-import { InputPlaylistFilterDTO } from "../model/Playlist";
+import { InputPlaylistFilterDTO, Playlist } from "../model/Playlist";
 import { Music } from "../model/Music";
 
 export class PlaylistDatabase extends BaseDatabase {
 
   private static TABLE_PLAYLIST = "PLAYLIST";
   private static TABLE_COLLECTION = "COLLECTION";
-  private static TABLE_MUSICS = "MUSICS";
 
   public async createPlaylist(
     id: string,
     title: string,
     subtitle: string,
-    date: string
+    date: string,
+    user_id: string
   ): Promise<void> {
     try {
       await this.getConnection()
@@ -20,7 +20,8 @@ export class PlaylistDatabase extends BaseDatabase {
           id,
           title,
           subtitle,
-          date
+          date,
+          user_id
         })
         .into(PlaylistDatabase.TABLE_PLAYLIST);
     } catch (error) {
@@ -42,6 +43,21 @@ export class PlaylistDatabase extends BaseDatabase {
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
+  }
+
+  public async getPlaylistByUserId(userID: string): Promise<any> {
+    const result = await this.getConnection()
+      .select("*")
+      .from(PlaylistDatabase.TABLE_PLAYLIST)
+      .where({ user_id: userID });
+
+      const playlists: Playlist[] = []
+
+      for (let playlist of result) {
+        playlists.push(Playlist.toPlaylistModel(playlist));
+      }
+
+      return playlists;
   }
 
   public async getPlaylistById(playlistId: string): Promise<any> {

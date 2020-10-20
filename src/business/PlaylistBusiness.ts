@@ -14,13 +14,13 @@ export class PlaylistBusiness {
                 throw new InvalidInputError("Title and subtitle are required")
             }
 
-            new Authenticator().getData(token)
+            const userId = new Authenticator().getData(token)
 
             const idGenerator = new IdGenerator();
             const id = idGenerator.generate();
 
             const playlistDatabase = new PlaylistDatabase();
-            await playlistDatabase.createPlaylist(id, music.title, music.subtitle, music.date)
+            await playlistDatabase.createPlaylist(id, music.title, music.subtitle, music.date, userId.id)
        } catch (error) {
             throw new UnknownError( error.message);
        }
@@ -37,6 +37,18 @@ export class PlaylistBusiness {
             const playlistDatabase = new PlaylistDatabase();
             await playlistDatabase.addMusicInPlaylist(id.playlist_id, id.music_id)
         } catch(error) {
+            throw new UnknownError(error.message)
+        }
+    }
+
+    async getPlaylistByUserId(token: string) {
+        try {
+            const userId = new Authenticator().getData(token)
+            const playlistDatabase = new PlaylistDatabase();
+            const playlists = await playlistDatabase.getPlaylistByUserId(userId.id);
+
+            return playlists
+        } catch (error) {
             throw new UnknownError(error.message)
         }
     }
