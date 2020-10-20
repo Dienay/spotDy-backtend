@@ -1,6 +1,6 @@
 import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../model/User";
-import { Music } from "../model/Music";
+import { InputMusicFilterDTO, Music } from "../model/Music";
 
 export class MusicDatabase extends BaseDatabase {
 
@@ -56,5 +56,20 @@ export class MusicDatabase extends BaseDatabase {
       .where({ id: musicId });
 
       return Music.toMusicModel(result[0]);
+  }
+
+  public async filterMusic(inputFilter: InputMusicFilterDTO):Promise<any> {
+    console.log("controller")
+    try {
+      const result = await this.getConnection().raw(`
+                SELECT * FROM ${MusicDatabase.TABLE_NAME}  
+                WHERE ${inputFilter.category} like "%${inputFilter.input.toLocaleLowerCase()}%"
+                ORDER BY ${inputFilter.category} ${inputFilter.orderType} ;  
+            `)
+
+            return result[0]
+    } catch (error) {
+      throw new Error(error.sqlMessage)
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { BaseDatabase } from "./BaseDatabase";
-import { User } from "../model/User";
+import { InputPlaylistFilterDTO } from "../model/Playlist";
 import { Music } from "../model/Music";
 
 export class PlaylistDatabase extends BaseDatabase {
@@ -12,8 +12,7 @@ export class PlaylistDatabase extends BaseDatabase {
     id: string,
     title: string,
     subtitle: string,
-    date: string,
-    image: string
+    date: string
   ): Promise<void> {
     try {
       await this.getConnection()
@@ -21,8 +20,7 @@ export class PlaylistDatabase extends BaseDatabase {
           id,
           title,
           subtitle,
-          date,
-          image
+          date
         })
         .into(PlaylistDatabase.TABLE_PLAYLIST);
     } catch (error) {
@@ -46,15 +44,6 @@ export class PlaylistDatabase extends BaseDatabase {
     }
   }
 
-  public async getMusicById(musicId: string): Promise<Music> {
-    const result = await this.getConnection()
-      .select("*")
-      .from(PlaylistDatabase.TABLE_PLAYLIST)
-      .where({ id: musicId });
-
-      return Music.toMusicModel(result[0]);
-  }
-
   public async getPlaylistById(playlistId: string): Promise<any> {
     const result = await this.getConnection()
       .select("*")
@@ -64,7 +53,7 @@ export class PlaylistDatabase extends BaseDatabase {
       return result[0];
   }
 
-  public async getPlaylist(playlistId: string): Promise<any> {
+  public async getMusicsInPlaylistByPLaylistId(playlistId: string): Promise<any> {
     const result = await this.getConnection().raw(`
       select MUSICS.title, MUSICS.author from COLLECTION
       join PLAYLIST
@@ -75,5 +64,19 @@ export class PlaylistDatabase extends BaseDatabase {
     `)
 
       return result[0];
+  }
+
+  public async filterPLaylist(inputPLaylistFilter: InputPlaylistFilterDTO):Promise<any> {
+    try {
+      const result = await this.getConnection().raw(`
+                SELECT * FROM ${PlaylistDatabase.TABLE_PLAYLIST}  
+                WHERE title like "%${inputPLaylistFilter.title.toLocaleLowerCase()}%"
+                ORDER BY title ${inputPLaylistFilter.orderType} ;  
+            `)
+
+            return result[0]
+    } catch (error) {
+      throw new Error(error.sqlMessage)
+    }
   }
 }

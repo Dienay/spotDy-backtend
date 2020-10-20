@@ -2,19 +2,19 @@ import { Request, Response } from "express";
 import { MusicBusiness } from "../business/MusicBusiness";
 import { PlaylistBusiness } from "../business/PlaylistBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
-import { MusicInputDTO } from "../model/Music";
-import { AddMusicInPlaylistInputDTO, PlaylistInputDTO } from "../model/Playlist";
+import moment from "moment";
+import { AddMusicInPlaylistInputDTO, InputPlaylistFilterDTO, PlaylistInputDTO } from "../model/Playlist";
 
 export class PlaylistController {
     async createPlaylist(req: Request, res: Response) {
         try {
             const token = req.headers.authorization as string
 
+            const date = moment().format("DD/MM/YYYY")
             const input: PlaylistInputDTO = {
                 title: req.body.title,
                 subtitle: req.body.subtitle,
-                date: req.body.date,
-                image: req.body.image
+                date: date
             }
 
             const playlistBusiness = new PlaylistBusiness();
@@ -25,7 +25,9 @@ export class PlaylistController {
              });
 
         } catch (error) {
-            res.status(400).send({ error: error.message });
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
+            });
         }
 
         await BaseDatabase.destroyConnection();
@@ -48,8 +50,8 @@ export class PlaylistController {
             });
 
         }catch (error) {
-            res.status(400).send({
-                message: "Get token error"
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
             });
         }
         await BaseDatabase.destroyConnection();
@@ -65,8 +67,8 @@ export class PlaylistController {
 
             res.status(200).send({result});
         } catch (error) {
-            res.status(400).send({
-                message: "Id not found"
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
             });
         }
     }
@@ -81,24 +83,43 @@ export class PlaylistController {
 
             res.status(200).send({result});
         } catch (error) {
-            res.status(400).send({
-                message: "Id not found"
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
             });
         }
     }
 
-    async getPlaylist(req: Request, res: Response) {
+    async getMusicsInPlaylistByPLaylistId(req: Request, res: Response) {
         try {
             const token = req.headers.authorization as string;
             const playlistId = req.params.id
 
             const playlistBusiness = new PlaylistBusiness();
-            const result = await playlistBusiness.getPlaylist(token, playlistId)
+            const result = await playlistBusiness.getMusicsInPlaylistByPLaylistId(token, playlistId)
 
             res.status(200).send({result});
         } catch (error) {
-            res.status(400).send({
-                message: "Id not found"
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
+            });
+        }
+    }
+
+    async filterPlaylist(req: Request, res: Response) {
+        try {
+            const token = req.headers.authorization as string;
+
+            const inputfilterPlaylist: InputPlaylistFilterDTO = {
+                title: req.query.title as string,
+                orderType: req.query.orderType as string || "ASC"
+            }
+
+            const result = await new PlaylistBusiness().filterPlaylist(token, inputfilterPlaylist)
+
+            res.status(200).send(result)
+        } catch (error) {
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
             });
         }
     }

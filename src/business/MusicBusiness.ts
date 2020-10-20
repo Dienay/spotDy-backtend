@@ -1,12 +1,19 @@
 import { MusicDatabase } from "../data/MusicDatabase";
-import { MusicInputDTO } from "../model/Music";
+import { InvalidInputError } from "../error/InvalidInputError";
+import { NotFoundError } from "../error/NotFoundError";
+import { UnknownError } from "../error/UnknownError";
+import { InputMusicFilterDTO, MusicInputDTO } from "../model/Music";
 import { Authenticator } from "../services/Authenticator";
 import { IdGenerator } from "../services/IdGenerator";
 
 export class MusicBusiness {
 
     async createMusic(music: MusicInputDTO, token: string) {
-        try {             
+        try {         
+            if(!music.title || !music.author || !music.date || !music.file || !music.genre || !music.album ) {
+                throw new InvalidInputError("All inputs are required")
+            }
+            
             const authenticator = new Authenticator();
             const userId = authenticator.getData(token)
 
@@ -16,7 +23,7 @@ export class MusicBusiness {
             const musicDatabase = new MusicDatabase();
             await musicDatabase.createMusic(id, music.title, music.author, music.date, music.file, music.genre, music.album, userId.id)
        } catch (error) {
-            throw new Error( error.message || "Error creating user. Please check your system administrator.");
+            throw new UnknownError( error.message );
        }
     }
 
@@ -24,20 +31,24 @@ export class MusicBusiness {
       try {
             const userId = new Authenticator().getData(token)
             const musicDatabase = new MusicDatabase();
-            const list = await musicDatabase.getMusicByUserId(userId.id);
-            const music = list.map((item:any)=>({
-                id: item.id,
-                title: item.title,
-                author: item.author,
-                date: item.date,
-                file: item.file,
-                genre: item.genre,
-                album: item.album
+            const musics = await musicDatabase.getMusicByUserId(userId.id);
+            const music = musics.map((music:any)=>({
+                id: music.id,
+                title: music.title,
+                author: music.author,
+                date: music.date,
+                file: music.file,
+                genre: music.genre,
+                album: music.album
             }))
+
+            if (!musics) {
+                throw new NotFoundError("Music not found")
+            }
 
             return music
         } catch(error) {
-            throw new Error(error.message)
+            throw new UnknownError(error.message)
         }
     }
 
@@ -47,9 +58,41 @@ export class MusicBusiness {
             const musicDatabase = new MusicDatabase();
             const music = await musicDatabase.getMusicById(musicId);
 
+            if (!music) {
+                throw new NotFoundError("Music not found")
+            }
+
             return music
         } catch (error) {
-            throw new Error(error.message)
+            throw new UnknownError(error.message)
+        }
+    }
+
+    async filterMusic(token: string,inputFilter: InputMusicFilterDTO) {
+        try {
+            new Authenticator().getData(token)
+
+            const validOrderByValues = ["album", "author", "genre"]
+            const validOrderTypeValues = ["ASC", "DESC"]
+
+            if(!validOrderByValues.includes(inputFilter.category)){
+                throw new InvalidInputError("\"category\" values ​​should be \"album\", \"author\" or \"genre\"")
+            }
+
+            if(!validOrderTypeValues.includes(inputFilter.orderType)){
+                throw new InvalidInputError("\"orderType\" values ​​should be \"ASC\" or \"DESC\"")
+            }
+
+            const result = await new MusicDatabase().filterMusic(inputFilter)
+
+            if(!result.length){
+                throw new NotFoundError("Music not found!")
+            }
+
+            return result
+
+        } catch (error) {
+            throw new UnknownError(error.message)
         }
     }
 }
