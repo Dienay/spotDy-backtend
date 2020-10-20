@@ -57,13 +57,12 @@ export class PlaylistController {
         await BaseDatabase.destroyConnection();
     }
 
-    async getMusicById(req: Request, res: Response) {
+    async getPlaylistByUserId(req: Request, res: Response) {
         try {
             const token = req.headers.authorization as string;
-            const musicId = req.params.id
 
-            const musicBusiness = new MusicBusiness();
-            const result = await musicBusiness.getMusicById(token, musicId)
+            const playlistBusiness = new PlaylistBusiness();
+            const result = await playlistBusiness.getPlaylistByUserId(token)
 
             res.status(200).send({result});
         } catch (error) {
