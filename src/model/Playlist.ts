@@ -3,8 +3,7 @@ export class Playlist{
     private id: string,
     private title: string,
     private subtitle: string,
-    private date: string,
-    private image: string
+    private date: string
     ){}
 
     getId(){
@@ -23,10 +22,6 @@ export class Playlist{
         return this.date;
     }
 
-    getImage(){
-        return this.image;
-    }
-
     setId(id: string){
         this.id = id;
     }
@@ -43,20 +38,15 @@ export class Playlist{
         this.date = date;
     }
 
-    setFile(image: string){
-        this.image = image;
-	}
-
     static toPlaylistModel(user: any): Playlist {
-        return new Playlist(user.id, user.title, user.subtitle, user.date, user.image);
+        return new Playlist(user.id, user.title, user.subtitle, user.date);
       }
 }
 
 export interface PlaylistInputDTO{
 	title: string,
 	subtitle: string,
-	date: string,
-	image: string
+	date: string
 }
 
 export interface AddMusicInPlaylistInputDTO{

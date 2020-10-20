@@ -25,7 +25,9 @@ export class MusicController {
              });
 
         } catch (error) {
-            res.status(400).send({ error: error.message });
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
+            });
         }
 
         await BaseDatabase.destroyConnection();
@@ -40,8 +42,8 @@ export class MusicController {
             res.status(200).send({result});
 
         }catch (error) {
-            res.status(400).send({
-                message: "Get token error"
+            res.status(error.customErrorCode || 400).send({
+                message: error.message,
             });
         }
         await BaseDatabase.destroyConnection();
@@ -57,8 +59,8 @@ export class MusicController {
 
             res.status(200).send({result});
         } catch (error) {
-            res.status(400).send({
-                message: "Id not found"
+            res.status(error.customErrorCode || 400).send({
+                message: error.message,
             });
         }
     }
@@ -78,8 +80,8 @@ export class MusicController {
 
             res.status(200).send(result)
         } catch (error) {
-            res.status(400).send({
-                message: "Music not found!"
+            res.status(error.customErrorCode || 400).send({
+                message: error.message,
             });
         }
     }

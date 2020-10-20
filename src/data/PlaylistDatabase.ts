@@ -12,8 +12,7 @@ export class PlaylistDatabase extends BaseDatabase {
     id: string,
     title: string,
     subtitle: string,
-    date: string,
-    image: string
+    date: string
   ): Promise<void> {
     try {
       await this.getConnection()
@@ -21,8 +20,7 @@ export class PlaylistDatabase extends BaseDatabase {
           id,
           title,
           subtitle,
-          date,
-          image
+          date
         })
         .into(PlaylistDatabase.TABLE_PLAYLIST);
     } catch (error) {
@@ -55,7 +53,7 @@ export class PlaylistDatabase extends BaseDatabase {
       return result[0];
   }
 
-  public async getPlaylist(playlistId: string): Promise<any> {
+  public async getMusicsInPlaylistByPLaylistId(playlistId: string): Promise<any> {
     const result = await this.getConnection().raw(`
       select MUSICS.title, MUSICS.author from COLLECTION
       join PLAYLIST

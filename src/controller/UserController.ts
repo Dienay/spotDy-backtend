@@ -22,7 +22,9 @@ export class UserController {
             res.status(200).send({ token });
 
         } catch (error) {
-            res.status(400).send({ error: error.message });
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
+            });
         }
 
         await BaseDatabase.destroyConnection();
@@ -48,7 +50,9 @@ export class UserController {
              });
 
         } catch (error) {
-            res.status(400).send({ error: error.message });
+            res.status(error.customErrorCode || 400).send({
+                error: error.message
+            });
         }
 
         await BaseDatabase.destroyConnection();
