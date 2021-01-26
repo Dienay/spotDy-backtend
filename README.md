@@ -4,8 +4,8 @@
 
 ## Principais tecnologias/ferramentas utilizadas
 
-1.NodeJs
-2.Typescript
+1. NodeJs
+2. Typescript
 
 <br>
 
