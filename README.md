@@ -52,7 +52,7 @@ npm start
 
 The [MIT License]() (MIT)
 
-Copyright :copyright: 2020 - Teste Dasa
+Copyright :copyright: 2020 - spotDy
 
 <br>
 
